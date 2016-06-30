@@ -1,0 +1,8 @@
+{
+  "name": "gpxMapFactor",
+  "description": "Add GPX to routing_points.xml",
+  "version": "0.1.0",
+  "devDependencies": {
+    "cheerio": "^0.20.0"
+  }
+}
