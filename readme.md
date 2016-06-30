@@ -10,13 +10,15 @@ long cycle rides.
 
 ## To Run
 
-`node insertGPX.js <your_gpx_file>`
+`node insertGPX.js <your_gpx_file> [random_sample_threshold]`
 
 
 Example usage:
 
 ```bash
-node insertGPX.js brouter-leicester-cardiff.gpx
+# With waypoints from "brouter-leicester-cardiff.gpx", randomly pick to include any single way point
+# with a 5% chance.
+node insertGPX.js brouter-leicester-cardiff.gpx 0.05
 ```
 
 ## Notes

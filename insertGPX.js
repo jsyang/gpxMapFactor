@@ -16,10 +16,18 @@ var fs = require('fs');
 var cheerio = require('cheerio');
 
 // http://stackoverflow.com/questions/31574127/node-js-cheerio-parser-brakes-uft-8-encoding
-var CHEERIO_OPTIONS = { decodeEntities: false };
+var CHEERIO_OPTIONS = {
+    decodeEntities: false
+};
 
 var XML$ = cheerio.load(fs.readFileSync('routing_points.xml'), CHEERIO_OPTIONS);
 var GPX$ = cheerio.load(fs.readFileSync(process.argv[2]), CHEERIO_OPTIONS);
+
+var RANDOM_SAMPLING_PERCENT = parseFloat(process.argv[3]);
+// Keep all way-points if random sampling threshold is not specified.
+if (isNaN(RANDOM_SAMPLING_PERCENT)) {
+    RANDOM_SAMPLING_PERCENT = 1;
+}
 
 // Backup
 execSync('cp -f routing_points.xml routing_points.bak.xml');
@@ -68,15 +76,21 @@ var trackXML = $trkpt.map(function addTrackPointAsWayPoint(i) {
             '</destination>'
         ].join('');
     } else {
-        return [
-            '<waypoint>',
-            '<name>Waypoint ' + i + '</name>',
-            '<lat>' + lat + '</lat>',
-            '<lon>' + lon + '</lon>',
-            '</waypoint>'
-        ].join('');
+        if (Math.random() < RANDOM_SAMPLING_PERCENT) {
+            return [
+                '<waypoint>',
+                '<name>Waypoint ' + i + '</name>',
+                '<lat>' + lat + '</lat>',
+                '<lon>' + lon + '</lon>',
+                '</waypoint>'
+            ].join('');
+        }
     }
 }).get();
+
+trackXML = trackXML.filter(Boolean);
+
+console.log('Adding a route with ' + trackXML.length + 'waypoint(s)...');
 
 $set.append(trackXML.join('\n'));
 
