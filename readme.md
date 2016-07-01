@@ -21,6 +21,13 @@ Example usage:
 node insertGPX.js brouter-leicester-cardiff.gpx 0.05
 ```
 
+## Routers
+
+- [cycle.travel](http://cycle.travel/map)
+- [GMaps Directions to GPX](https://blog.sverrirs.com/2015/08/converting-google-maps-directions-to.html)
+- [Brouter](http://brouter.de/)
+- [OpenStreetMap routers comparison](http://wiki.openstreetmap.org/wiki/Routing/online_routers)
+
 ## Notes
 
 Lat-long coordinates from GPX are in Decimal format vs Degrees Minutes Seconds (Milliseconds)

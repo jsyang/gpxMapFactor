@@ -46,16 +46,32 @@ var newSet$ = cheerio.load([
 
 var $set = newSet$('set');
 
+// Figure out if GPX contains a TRK (track) or a RTE (route) element
+// TRK is just a set of waypoints: intent is show markers at regular intervals in the route
+// RTE is a set of turn markers: intent is to show junctions to hit rather
+
+var $root;
+var GPXtype;
+
+if (GPX$('trk').length > 0) {
+    GPXtype = 'trk';
+    $root = GPX$('trk');
+} else if (GPX$('rte').length > 0) {
+    GPXtype = 'rte';
+    $root = GPX$('rte');
+}
+
 // Update set name
-var name = GPX$('trk').find('name').text();
+var name = $root.find('name').first().text();
 $set.find('name').html(name);
 
 // Add way points
-var $trkpt = GPX$('trkpt');
-var lastTrackpointIndex = $trkpt.length - 1;
+var $pt = $root.find(GPXtype + 'pt');
+var lastTrackpointIndex = $pt.length - 1;
 
-var trackXML = $trkpt.map(function addTrackPointAsWayPoint(i) {
+var trackXML = $pt.map(function addPointAsWayPoint(i) {
     var $this = GPX$(this);
+    var $name = $this.find('name');
     var lat = DEC_to_MS(parseFloat($this.attr('lat')));
     var lon = DEC_to_MS(parseFloat($this.attr('lon')));
 
@@ -79,7 +95,8 @@ var trackXML = $trkpt.map(function addTrackPointAsWayPoint(i) {
         if (Math.random() < RANDOM_SAMPLING_PERCENT) {
             return [
                 '<waypoint>',
-                '<name>Waypoint ' + i + '</name>',
+                $name.length !== 0 ?
+                    '<name>' + $name.text() + '</name>' : '<name>Waypoint ' + i + '</name>',
                 '<lat>' + lat + '</lat>',
                 '<lon>' + lon + '</lon>',
                 '</waypoint>'
